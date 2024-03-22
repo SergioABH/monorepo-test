@@ -1,0 +1,30 @@
+name: Frontend Render Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build application
+        run: npm run build
+
+      - name: Deploy to Render
+        run: |
+          curl -X POST \
+            https://api.render.com/deploy/${{ secrets.FRONTEND_ID }}?key=RyHFZMJexuo \
+            -H "Authorization: Bearer ${{ secrets.API_KEY }}" \
+            -H "Content-Type: application/json" \
+            -d '{"gitCommit": "${{ github.sha }}"}'
+            
